@@ -1,9 +1,11 @@
-﻿using System.Reflection;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using BepInEx;
+using BepInEx.Logging;
 using CementGB.Modules;
 using CementGB.Utilities;
-using Il2Cpp;
-using MelonLoader;
-using MelonLoader.Utils;
 
 namespace CementGB;
 
@@ -11,37 +13,35 @@ namespace CementGB;
 ///     The main entrypoint for Cement. This is where everything initializes from. Public members include important paths
 ///     and MelonMod overrides.
 /// </summary>
-public class Mod : MelonMod
+[BepInPlugin(MyPluginInfo.Guid, MyPluginInfo.Name, MyPluginInfo.Version)]
+public class Mod : BaseUnityPlugin
 {
     /// <summary>
     ///     Cement's UserData path ("Gang Beasts\UserData\CementGB"). Created in <see cref="OnInitializeMelon" />.
     /// </summary>
-    public static readonly string UserDataPath = Path.Combine(MelonEnvironment.UserDataDirectory, "CementGB");
+    public static readonly string UserDataPath = Path.Combine(Paths.ConfigPath, "CementGB");
+
+    /// <summary>
+    ///     Publicized BepInEx Logger
+    /// </summary>
+    public static ManualLogSource Logger { get; private set; }
 
     public static readonly string ModulesPath =
-        Path.GetFullPath(Path.Combine(Melon<Mod>.Instance.MelonAssembly.Location, "..", "..", "UserLibs",
+        Path.GetFullPath(Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", "UserLibs",
             "CementGBModules"));
 
-    public static string?
-        MapArg => CommandLineParser.Instance.GetValueForKey("-map", false);
-
-    public static string?
-        ModeArg => CommandLineParser.Instance.GetValueForKey("-mode", false);
-
-    public static bool
-        DebugArg => Environment.GetCommandLineArgs().Contains("-debug");
-
-    public static MelonLogger.Instance Logger =>
-        Melon<Mod>.Logger; // For if you're tired of the singleton pattern I guess
+    public static string? MapArg => CommandLineParser.Instance.GetValueForKey("-map", false);
+    public static string? ModeArg => CommandLineParser.Instance.GetValueForKey("-mode", false);
+    public static bool DebugArg => Environment.GetCommandLineArgs().Contains("-debug");
 
     /// <summary>
     ///     Fires when Cement loads. Since Cement's MelonPriority is set to a very low number, the mod should initialize before
     ///     any other.
     /// </summary>
-    public override void OnInitializeMelon()
+    public void Awake()
     {
-        base.OnInitializeMelon();
-
+        Logger = base.Logger;
+        
         // Setup directories and folder structure
         FileStructure();
 
@@ -49,9 +49,7 @@ public class Mod : MelonMod
         CementPreferences.Initialize();
         if (!CementPreferences.VerboseMode)
         {
-            Logger.Msg(
-                System.ConsoleColor.White,
-                "Verbose Mode disabled! Enable verbose mode in UserData/CementGB/CementGB.cfg for more detailed logging.");
+            Logger.LogMessage("Verbose Mode disabled! Enable verbose mode in UserData/CementGB/CementGB.cfg for more detailed logging.");
         }
 
         CommonHooks.Initialize();
@@ -63,10 +61,8 @@ public class Mod : MelonMod
     ///     This method saves MelonPreferences for Cement via <c>CementPreferences.Deinitialize()</c>, which is an internal
     ///     method.
     /// </summary>
-    public override void OnDeinitializeMelon()
+    public void OnApplicationQuit()
     {
-        base.OnDeinitializeMelon();
-
         CementPreferences.Deinitialize();
     }
 
@@ -74,9 +70,8 @@ public class Mod : MelonMod
     ///     Fires after the first few Unity MonoBehaviour.Start() methods. Creates components that couldn't be loaded before
     ///     Unity's runtime started.
     /// </summary>
-    public override void OnLateInitializeMelon()
+    public void Start()
     {
-        base.OnLateInitializeMelon();
         foreach (var file in Directory.GetFiles(ModulesPath, "*.dll", SearchOption.AllDirectories))
         {
             try
@@ -86,7 +81,7 @@ public class Mod : MelonMod
             }
             catch
             {
-                Logger.Error($"Failed to auto-load CementGB modules from assembly file {Path.GetFileName(file)}!");
+                Logger.LogError($"Failed to auto-load CementGB modules from assembly file {Path.GetFileName(file)}!");
             }
         }
     }
@@ -97,8 +92,9 @@ public class Mod : MelonMod
         _ = Directory.CreateDirectory(ModulesPath);
     }
 
-    public override void OnUpdate()
+    public void Update()
     {
         MainThreadDispatcher.DispatchActions();
+        CementEvents.InvokeUpdate();
     }
 }

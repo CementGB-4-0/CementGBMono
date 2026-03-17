@@ -3,7 +3,7 @@
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 
-        <TargetFramework>net6</TargetFramework>
+        <TargetFramework>net472</TargetFramework>
 
         <AssemblyName>CementGB</AssemblyName>
         <RootNamespace>CementGB</RootNamespace>
@@ -14,7 +14,6 @@
         <LangVersion>12</LangVersion>
         <DefineConstants>$(DefineConstants);MELONLOADER</DefineConstants>
         <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
         <Optimize>true</Optimize>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
@@ -66,23 +65,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Open.Nat" Version="2.1.0"/>
-
         <!-- CementGB Dependencies-->
-        <PackageReference Include="GangBeasts.GameLibs" Version="1.27.0"/>
-        <PackageReference Include="LavaGang.MelonLoader" Version="0.7.1"/>
-        <PackageReference Include="Il2CppInterop.Common" Version="1.4.6-ci.579"/>
-        <PackageReference Include="Il2CppInterop.Runtime" Version="1.4.6-ci.579"/>
-        <PackageReference Include="Il2CppInterop.HarmonySupport" Version="1.4.6-ci.579"/>
-        <PackageReference Include="Iced" Version="1.21.0"/>
-        <PackageReference Include="Mono.Cecil" Version="0.11.6"/>
-        <PackageReference Include="HarmonyX" Version="2.10.2"/>
-        <PackageReference Include="MonoMod" Version="22.7.31.1"/>
-        <PackageReference Include="MonoMod.RuntimeDetour" Version="22.7.31.1"/>
-        <PackageReference Include="MonoMod.Utils" Version="22.7.31.1"/>
-        <PackageReference Include="Samboy063.Tomlet" Version="5.4.0"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-
         <Reference Include="ref/**/*.dll"/>
     </ItemGroup>
 

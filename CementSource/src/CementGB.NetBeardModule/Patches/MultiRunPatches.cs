@@ -1,9 +1,10 @@
 using HarmonyLib;
-using Il2CppCoatsink.Platform;
-using Il2CppCoatsink.Platform.Systems.UI;
-using Il2CppCS.CorePlatform;
-using Il2CppCS.CorePlatform.CSPlatform;
-using Il2CppGB.Core;
+using Coatsink.Platform;
+using Coatsink.Platform.Systems.UI;
+using CS.CorePlatform;
+using CS.CorePlatform.CSPlatform;
+using GB.Core;
+using static Coatsink.Platform.UI;
 
 namespace CementGB.Modules.NetBeardModule.Patches;
 
@@ -12,21 +13,15 @@ internal static class MultiRunPatches
     [HarmonyPatch(typeof(CStoCorePlatform), nameof(CStoCorePlatform.OnInitializeComplete))]
     private static class OnInitializeCompletePatch
     {
-        private static bool Prefix(CStoCorePlatform __instance)
+        private static bool Prefix(CStoCorePlatform __instance, ref TaskResult<bool> obj)
         {
-            if (!NetBeardModule.IsServer)
+            if (NetBeardModule.IsServer)
             {
-                return true;
+                obj = new TaskResult<bool>();
+                obj.Complete(1u); // ??
             }
 
-            Users.MaxUsers = Global.NetworkMaxPlayers;
-            UI.PopUpUI = __instance._dialogUI.Cast<IUIPopUpManager>();
-            BasePlatformManager._InitializedPlatformAPI = true;
-            BasePlatformManager.Initialized = true;
-            __instance.PassEntitlement();
-            __instance._online.CheckSetup();
-            __instance._network.CheckSetup();
-            return false;
+            return true;
         }
     }
 }

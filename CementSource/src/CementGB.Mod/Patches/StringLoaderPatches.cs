@@ -1,6 +1,6 @@
 using CementGB.Utilities;
+using GB.Data;
 using HarmonyLib;
-using Il2CppGB.Data;
 
 namespace CementGB.Patches;
 

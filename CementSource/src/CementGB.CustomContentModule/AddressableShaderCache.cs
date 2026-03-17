@@ -1,11 +1,9 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using CementGB.Modules.CustomContent.Utilities;
-using CementGB.Utilities;
-using Il2CppInterop.Runtime;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using Il2CppSystem.Linq;
-using MelonLoader;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Events;
@@ -30,8 +28,8 @@ public static class AddressableShaderCache
         //yield return new WaitForEndOfFrame();
         //yield return InitCacheShaders();
         if (logging)
-            CustomContentModule.Logger?.VerboseLog(ConsoleColor.DarkYellow, "Reloading Addressable shaders. . .");
-        Il2CppArrayBase<MeshRenderer> renderers;
+            CustomContentModule.Logger?.VerboseLog("Reloading Addressable shaders. . .");
+        MeshRenderer[] renderers;
         if (!parent || parent == null)
         {
             renderers = Object.FindObjectsOfType<MeshRenderer>();
@@ -42,7 +40,7 @@ public static class AddressableShaderCache
             rendList.AddRange(parent.GetComponents<MeshRenderer>());
             rendList.AddRange(parent.GetComponentsInChildren<MeshRenderer>());
 
-            renderers = new Il2CppReferenceArray<MeshRenderer>([.. rendList]);
+            renderers = [.. rendList];
         }
 
         foreach (var meshRenderer in renderers)

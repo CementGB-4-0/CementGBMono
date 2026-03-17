@@ -1,7 +1,8 @@
+using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using MelonLoader;
+using BepInEx.Logging;
 
 namespace CementGB.Utilities;
 
@@ -27,15 +28,12 @@ public static class LoggingUtilities
         string message,
         [CallerMemberName] string? callerName = null,
         [CallerLineNumber] int lineNumber = 0,
-        MelonLogger.Instance? logger = null)
+        ManualLogSource? logger = null)
     {
-        if (!CementPreferences.VerboseMode)
-        {
-            return;
-        }
+        if (!CementPreferences.VerboseMode) return;
 
         var fullCallerName = callerName;
-        foreach (var method in new StackTrace().GetFrames())
+        foreach (var method in new StackTrace().GetFrames()!)
         {
             var methodBase = method.GetMethod();
             if (methodBase == null)
@@ -50,7 +48,7 @@ public static class LoggingUtilities
         }
 
         logger ??= Mod.Logger;
-        logger.Msg(color, callerName == null ? $"{message}" : $"[{fullCallerName}] {message} | Ln {lineNumber}");
+        logger.LogMessage(callerName == null ? $"{message}" : $"[{fullCallerName}] {message} | Ln {lineNumber}");
     }
 
     /// <summary>
@@ -72,7 +70,7 @@ public static class LoggingUtilities
     }
 
     public static void VerboseLog(
-        this MelonLogger.Instance logger,
+        this ManualLogSource logger,
         string message,
         [CallerMemberName] string? callerName = null,
         [CallerLineNumber] int lineNumber = 0)
@@ -80,8 +78,8 @@ public static class LoggingUtilities
         logger.VerboseLog(ConsoleColor.DarkGray, message, callerName, lineNumber);
     }
 
-    public static void VerboseLog(
-        this MelonLogger.Instance logger,
+    private static void VerboseLog(
+        this ManualLogSource logger,
         ConsoleColor color,
         string message,
         [CallerMemberName] string? callerName = null,

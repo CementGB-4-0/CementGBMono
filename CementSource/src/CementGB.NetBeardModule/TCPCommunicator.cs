@@ -1,8 +1,10 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using CementGB.Utilities;
-using MelonLoader;
 using UnityEngine;
 
 namespace CementGB.Modules.NetBeardModule;
@@ -34,13 +36,13 @@ public static class TCPCommunicator
         if (_firstInitCall)
         {
             _firstInitCall = false;
-            Application.add_quitting(new Action(() =>
+            Application.quitting += () =>
             {
                 Server?.Stop();
                 Client?.Close();
-            }));
+            };
 
-            MelonEvents.OnUpdate.Subscribe(OnUpdate);
+            CementEvents.OnUpdate += OnUpdate;
         }
 
         if (!NetBeardModule.IsServer || Server != null) return;
@@ -79,7 +81,7 @@ public static class TCPCommunicator
         }
         catch (SocketException e)
         {
-            NetBeardModule.Logger?.VerboseLog(ConsoleColor.DarkRed, $"TCP server connection error: {e}");
+            NetBeardModule.Logger?.VerboseLog($"TCP server connection error: {e}");
             Client = null;
         }
     }
@@ -123,6 +125,11 @@ public static class TCPCommunicator
     private static string[] DataFromMessage(string message)
     {
         var split = message.IndexOf(';');
-        return split == -1 ? ["", ""] : [message[..split], message[(split + 1)..]];
+        if (split == -1) return ["", ""];
+        
+        string prefix = message.Substring(0, split);
+        string payload = message.Substring(split + 1);
+
+        return [prefix, payload];
     }
 }

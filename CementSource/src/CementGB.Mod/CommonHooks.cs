@@ -1,4 +1,5 @@
-using MelonLoader;
+using System;
+using UnityEngine.SceneManagement;
 
 namespace CementGB;
 
@@ -16,12 +17,12 @@ public static class CommonHooks
 
     internal static void Initialize()
     {
-        MelonEvents.OnSceneWasLoaded.Subscribe(OnSceneWasLoaded);
+        SceneManager.sceneLoaded += OnSceneWasLoaded;
     }
 
-    private static void OnSceneWasLoaded(int buildIndex, string sceneName)
+    private static void OnSceneWasLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (sceneName != "Menu" || _menuFirstBoot) return;
+        if (scene.name != "Menu" || _menuFirstBoot) return;
 
         _menuFirstBoot = true;
         OnMenuFirstBoot?.Invoke();

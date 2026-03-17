@@ -1,21 +1,20 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using CementGB.Utilities;
 using HarmonyLib;
-using Il2Cpp;
-using Il2CppCoatsink.UnityServices.Matchmaking;
-using Il2CppCoreNet.Components.Server;
-using Il2CppCoreNet.Config;
-using Il2CppCoreNet.Utils;
-using Il2CppGB.Config;
-using Il2CppGB.Core;
-using Il2CppGB.Game;
-using Il2CppGB.Gamemodes;
-using Il2CppGB.Menu;
-using Il2CppGB.Networking.Components.Client;
-using Il2CppGB.Platform.Lobby;
-using Il2CppGB.UI;
-using Il2CppGB.UnityServices.Matchmaking;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Coatsink.UnityServices.Matchmaking;
+using CoreNet.Components.Server;
+using CoreNet.Config;
+using CoreNet.Utils;
+using GB.Config;
+using GB.Core;
+using GB.Game;
+using GB.Gamemodes;
+using GB.Menu;
+using GB.Networking.Components.Client;
+using GB.Platform.Lobby;
+using GB.UI;
+using GB.UnityServices.Matchmaking;
 using UnityEngine.Networking;
 
 namespace CementGB.Modules.NetBeardModule.Patches;
@@ -30,7 +29,7 @@ internal static class ModdedServerPatches
         __instance._wantsToLeave = false;
     }
 
-    [HarmonyPatch(typeof(Il2CppCoreNet.NetworkManager), nameof(Il2CppCoreNet.NetworkManager.LaunchClient))]
+    [HarmonyPatch(typeof(CoreNet.NetworkManager), nameof(CoreNet.NetworkManager.LaunchClient))]
     [HarmonyPrefix]
     private static void LaunchClientPrefix(NetworkManager __instance, ref string IP)
     {
@@ -42,8 +41,8 @@ internal static class ModdedServerPatches
             IP = IPAddress.Loopback.ToString();
             __instance.networkAddress = IP;
         }
-
-        Mod.Logger.Msg(ConsoleColor.Blue, $"Connecting to server IP: {IP}");
+        
+        // TODO: Mod.Logger.Msg(ConsoleColor.Blue, $"Connecting to server IP: {IP}");
     }
 
     [HarmonyPatch(typeof(MenuHandlerGamemodes), nameof(MenuHandlerGamemodes.StartGameLogic))]
@@ -66,7 +65,7 @@ internal static class ModdedServerPatches
 
         var currentSelectedLevels = __instance.mapSetup.GetCurrentSelectedLevels(out var isRandomSelected);
         __instance.selectedConfig = GBConfigLoader.CreateRotationConfig(
-            (Il2CppStringArray)currentSelectedLevels.ToArray(),
+            currentSelectedLevels.ToArray(),
             __instance.CurrentGamemode,
             __instance.CurrentGamemode is GameModeEnum.Football or GameModeEnum.Waves
                 ? 1
@@ -99,7 +98,7 @@ internal static class ModdedServerPatches
 
         __instance.onlineCountdown.StartCountdown(
             3f,
-            new Action(() =>
+            () =>
             {
                 LobbyManager.Instance.LobbyStates.CurrentState = LobbyState.State.Ready | LobbyState.State.InGame;
                 LobbyManager.Instance.LobbyStates.IP = address.ToString();
@@ -114,7 +113,7 @@ internal static class ModdedServerPatches
                 };
 
                 LobbyManager.Instance.LobbyStates.MatchmakingComplete(result);
-            }));
+            });
 
         return false;
     }

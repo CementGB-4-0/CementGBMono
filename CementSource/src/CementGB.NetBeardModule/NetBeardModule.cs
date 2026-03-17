@@ -1,19 +1,21 @@
+using System;
+using System.Linq;
 using System.Net;
-using Il2Cpp;
-using Il2CppCoreNet.Contexts;
-using Il2CppCoreNet.Model;
-using Il2CppCoreNet.Objects;
-using Il2CppCoreNet.Utils;
-using Il2CppCS.CorePlatform;
-using Il2CppGB.Config;
-using Il2CppGB.Core;
-using Il2CppGB.Core.Bootstrappers;
-using Il2CppGB.Game;
-using Il2CppGB.Networking.Objects;
-using Il2CppGB.Platform.Lobby;
-using Il2CppGB.UI.Beasts;
-using MelonLoader;
-using Open.Nat;
+using System.Threading;
+using System.Threading.Tasks;
+using CoreNet.Contexts;
+using CoreNet.Model;
+using CoreNet.Objects;
+using CoreNet.Utils;
+using CS.CorePlatform;
+using GB.Config;
+using GB.Core;
+using GB.Core.Bootstrappers;
+using GB.Game;
+using GB.Networking.Objects;
+using GB.Platform.Lobby;
+using GB.UI.Beasts;
+// using Open.Nat;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -83,7 +85,7 @@ public class NetBeardModule : InstancedCementModule
     /// </summary>
     public static bool LowGraphicsMode => Environment.GetCommandLineArgs().Contains("-lowgraphics");
 
-    internal new static MelonLogger.Instance? Logger => GetModule<NetBeardModule>()?.Logger;
+    // internal new static MelonLogger.Instance? Logger => GetModule<NetBeardModule>()?.Logger;
 
     // public static int maxPlayers = 16;
 
@@ -97,14 +99,14 @@ public class NetBeardModule : InstancedCementModule
 
         LobbyCommunicator.Awake();
         TCPCommunicator.Init();
-        LobbyManager.add_onSetupComplete(new Action(OnBoot));
+        LobbyManager.onSetupComplete += OnBoot();
 
         if (!IsServer)
             return;
 
-        Logger?.Msg($"{ServerLogPrefix} Setting up pre-boot dedicated server overrides. . .");
+        // TODO: Logger?.Msg($"{ServerLogPrefix} Setting up pre-boot dedicated server overrides. . .");
         AudioListener.pause = true;
-        Logger?.Msg(ConsoleColor.Green, $"{ServerLogPrefix} Done!");
+        // TODO: Logger?.Msg(ConsoleColor.Green, $"{ServerLogPrefix} Done!");
     }
 
     private void OnBoot()
@@ -113,7 +115,7 @@ public class NetBeardModule : InstancedCementModule
         {
             NetworkBootstrapper.IsDedicatedServer = IsServer;
             _ = LobbyManager.Instance.LobbyObject.AddComponent<DevelopmentTestServer>();
-            Logger?.Msg(ConsoleColor.Green, "Added DevelopmentTestServer to lobby object.");
+            // TODO: Logger?.Msg(ConsoleColor.Green, "Added DevelopmentTestServer to lobby object.");
         }
 
         if (IsServer)
@@ -142,7 +144,7 @@ public class NetBeardModule : InstancedCementModule
 
     private async void ServerBoot()
     {
-        Logger?.Msg($"{ServerLogPrefix} Setting up server boot...");
+        // TODO: Logger?.Msg($"{ServerLogPrefix} Setting up server boot...");
         var bootstrapper = Object.FindObjectOfType<NetworkBootstrapper>();
         bootstrapper.AutoRunServer = IsServer && !DontAutoStart;
         MonoSingleton<Global>.Instance.LevelLoadSystem.gameObject.SetActive(false);
@@ -165,13 +167,13 @@ public class NetBeardModule : InstancedCementModule
             var forwardExternalIP = await OpenPort(Port, Port, Protocol.Udp, "NetBeard: Modded Gang Beasts Server");
             if (forwardExternalIP != null)
             {
-                Mod.Logger.Msg(ConsoleColor.Green,
+                // TODO: Mod.Logger.Msg(ConsoleColor.Green,
                     $"{ServerLogPrefix} Server successfully forwarded to address {forwardExternalIP}:{Port} (UDP)");
                 LobbyCommunicator.UserExternalIP = forwardExternalIP;
             }
         }
 
-        Mod.Logger.Msg(ConsoleColor.Green, $"{ServerLogPrefix} Done!");
+        // TODO: Mod.Logger.Msg(ConsoleColor.Green, $"{ServerLogPrefix} Done!");
     }
 
     private static void RemoveRendering()

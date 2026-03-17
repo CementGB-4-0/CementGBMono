@@ -1,23 +1,27 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using BepInEx.Logging;
 using CementGB.Utilities;
-using MelonLoader;
+using UnityEngine;
 
 namespace CementGB.Modules;
 
-public abstract class InstancedCementModule
+public abstract class InstancedCementModule : MonoBehaviour
 {
     private static readonly List<InstancedCementModule> ModuleHolder = [];
 
     protected readonly HarmonyLib.Harmony HarmonyInstance;
 
-    public readonly MelonLogger.Instance Logger;
+    public readonly ManualLogSource Logger;
     protected readonly Assembly ModuleAssembly;
 
     protected InstancedCementModule()
     {
         HarmonyInstance = new HarmonyLib.Harmony(GetType().FullName);
         ModuleAssembly = Assembly.GetCallingAssembly();
-        Logger = new MelonLogger.Instance($"Module_{ModuleAssembly.GetName().Name}");
+        Logger = new ManualLogSource($"Module_{ModuleAssembly.GetName().Name}");
         SubscribeInternalMethods();
     }
 
@@ -70,9 +74,9 @@ public abstract class InstancedCementModule
 
     protected virtual void DoManualPatches()
     {
-        Mod.Logger.Msg($"Cement Module {GetType().Name} applying patches. . .");
+        Mod.Logger.LogMessage($"Cement Module {GetType().Name} applying patches. . .");
         HarmonyInstance.PatchAll(ModuleAssembly);
-        Mod.Logger.Msg(ConsoleColor.Green, "Done!");
+        Mod.Logger.LogMessage("Done!");
     }
 
     protected virtual void OnUpdate()
@@ -81,7 +85,7 @@ public abstract class InstancedCementModule
 
     private void SubscribeInternalMethods()
     {
-        MelonEvents.OnUpdate.Subscribe(OnUpdate);
+        CementEvents.OnUpdate += OnUpdate;
     }
 
     private void OnInitialize_Internal()

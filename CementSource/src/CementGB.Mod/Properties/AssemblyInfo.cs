@@ -1,15 +1,9 @@
 ﻿using System.Reflection;
 using CementGB;
-using MelonLoader;
 
-[assembly: AssemblyCompany(MyPluginInfo.Author)]
+[assembly: AssemblyCompany(MyPluginInfo.Guid)]
 [assembly: AssemblyProduct(MyPluginInfo.Name)]
-[assembly: AssemblyCopyright("Created by " + MyPluginInfo.Author)]
-[assembly: AssemblyTrademark(MyPluginInfo.Author)]
+[assembly: AssemblyCopyright("Created by " + MyPluginInfo.Guid)]
+[assembly: AssemblyTrademark(MyPluginInfo.Guid)]
 [assembly: AssemblyVersion(MyPluginInfo.Version)]
 [assembly: AssemblyFileVersion(MyPluginInfo.Version)]
-
-[assembly: MelonInfo(typeof(Mod), MyPluginInfo.Name, MyPluginInfo.Version, MyPluginInfo.Author)]
-[assembly: MelonColor(0, 99, 198, 255)]
-[assembly: MelonGame("Boneloaf", "Gang Beasts")]
-[assembly: MelonPriority(-1000)]

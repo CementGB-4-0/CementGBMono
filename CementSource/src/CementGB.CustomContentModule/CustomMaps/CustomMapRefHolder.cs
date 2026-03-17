@@ -1,5 +1,6 @@
+using System;
+using GB.Data.Loading;
 using GBMDK;
-using Il2CppGB.Data.Loading;
 using UnityEngine.ResourceManagement.ResourceLocations;
 
 namespace CementGB.Modules.CustomContent;
@@ -13,7 +14,7 @@ public class CustomMapRefHolder(IResourceLocation sceneDataLoc, IResourceLocatio
     /// <summary>
     ///     The name of the map, parsed from the loaded SceneData's addressable key.
     /// </summary>
-    public readonly string SceneName = sceneDataLoc.PrimaryKey.Split("-Data")[0];
+    public readonly string SceneName = sceneDataLoc.PrimaryKey.Split(["-Data"], StringSplitOptions.None)[0];
 
     /// <summary>
     ///     Provides gamemode selection info for the map.

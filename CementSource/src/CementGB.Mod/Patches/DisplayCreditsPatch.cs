@@ -1,7 +1,6 @@
-﻿using CementGB.Utilities;
+﻿using System.Reflection;
+using CementGB.Utilities;
 using HarmonyLib;
-using Il2Cpp;
-using MelonLoader;
 using UnityEngine;
 
 namespace CementGB.Patches;
@@ -15,11 +14,10 @@ internal static class DisplayCreditsPatch
 
         private static void Prefix(DisplayCredits __instance)
         {
-            if (textAsset != null)
-                return;
+            if (textAsset) return;
 
             textAsset = new TextAsset(
-                $"{EmbeddedUtilities.ReadEmbeddedText(Melon<Mod>.Instance.MelonAssembly.Assembly, "CementGB.Mod.Assets.CreditsText.txt")}\n\n{__instance.textFile.text}");
+                $"{EmbeddedUtilities.ReadEmbeddedText(Assembly.GetExecutingAssembly(), "CementGB.Mod.Assets.CreditsText.txt")}\n\n{__instance.textFile.text}");
             __instance.textFile = textAsset;
         }
     }

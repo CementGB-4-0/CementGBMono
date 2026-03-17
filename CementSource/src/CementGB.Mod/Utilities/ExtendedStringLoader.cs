@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace CementGB.Utilities;
 
 /// <summary>
@@ -21,9 +23,7 @@ public static class ExtendedStringLoader
     {
         if (!items.TryAdd(key, value))
         {
-            LoggingUtilities.VerboseLog(
-                ConsoleColor.DarkRed,
-                $"'{key}' has already been registered in ExtendedStringLoader");
+            LoggingUtilities.VerboseLog($"'{key}' has already been registered in ExtendedStringLoader");
         }
     }
 }

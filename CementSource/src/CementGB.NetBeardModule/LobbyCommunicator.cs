@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Net;
-using Il2Cpp;
-using Il2CppGB.Config;
-using Il2CppGB.Core;
-using Il2CppGB.Game;
-using Il2CppGB.Gamemodes;
-using Il2CppGB.UnityServices.Matchmaking;
+using System.Net.Http;
+using System.Threading.Tasks;
+using GB.Config;
+using GB.Core;
+using GB.Game;
+using GB.Gamemodes;
+using GB.UnityServices.Matchmaking;
 using MelonLoader;
 using Newtonsoft.Json;
 using Random = UnityEngine.Random;
@@ -16,8 +17,6 @@ internal static class LobbyCommunicator
 {
     public static GBGameData? gameData;
     public static IPAddress? UserExternalIP { get; set; }
-
-    private static MelonLogger.Instance? Logger => InstancedCementModule.GetModule<NetBeardModule>()?.Logger;
 
     public static async void Awake()
     {
@@ -38,7 +37,7 @@ internal static class LobbyCommunicator
     private static IEnumerator HandleGBGameData(string payload)
     {
         // Absolutely 100% make sure we're running on the main thread
-        // Hacky I know dont hate me I'll refactor :(
+        // Hacky I know don't hate me I'll refactor :(
         yield return null;
 
         GameManagerNew.Instance.EndGameSession("DISCONNECT_GAME_COMPLETE");

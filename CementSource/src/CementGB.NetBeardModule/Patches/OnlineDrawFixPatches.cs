@@ -1,8 +1,8 @@
+using CoreNet.Contexts;
+using GB.Game;
+using GB.Networking.Objects;
 using HarmonyLib;
-using Il2CppCoreNet.Contexts;
-using Il2CppGB.Game;
-using Il2CppGB.Networking.Objects;
-using Il2CppGB.Networking.Utils;
+using GB.Networking.Utils;
 
 namespace CementGB.Modules.NetBeardModule.Patches;
 

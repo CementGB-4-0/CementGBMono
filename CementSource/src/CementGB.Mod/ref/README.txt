@@ -1,1 +1,0 @@
-﻿Copy your MelonLoader installation's Il2CppAssemblies and net6 folder here - in the ref folder!!
